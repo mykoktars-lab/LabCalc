@@ -18,12 +18,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Extract Uploaded ZIP
+      - name: Extract Uploaded ZIP (Skip workflows)
         run: |
-          ZIP_FILE=$(ls *.zip | head -n 1)
+          ZIP_FILE=$(ls *.zip 2>/dev/null | head -n 1)
           if [ -n "$ZIP_FILE" ]; then
             echo "Mengekstrak $ZIP_FILE..."
-            unzip -o "$ZIP_FILE" -d .
+            unzip -o "$ZIP_FILE" -x ".github/*" ".github/**" -d .
             rm -f "$ZIP_FILE"
           fi
 
