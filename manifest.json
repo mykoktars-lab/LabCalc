@@ -1,0 +1,21 @@
+{
+  "name": "LabCalc QC - Kalkulator FFA & Kadar Air",
+  "short_name": "LabCalc QC",
+  "description": "Kalkulator otomatis laboratorium QC untuk pengujian %FFA dan Kadar Air.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b1120",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

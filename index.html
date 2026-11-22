@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>LabCalc QC — Kalkulator FFA & Kadar Air</title>
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="apple-touch-icon" href="assets/logo.png" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0b1120;
+      --bg-secondary: #131c31;
+      --bg-card: #18233c;
+      --bg-input: #0f172a;
+      --accent: #14b8a6;
+      --accent-hover: #0d9488;
+      --accent-glow: rgba(20, 184, 166, 0.2);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --border: #263554;
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.14);
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.14);
+      --radius-lg: 20px;
+      --radius-md: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      background: var(--bg-primary);
+      display: flex;
+      flex-direction: column;
+      padding: 16px 18px 90px;
+      position: relative;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0 18px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand img {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+    }
+
+    .brand-title h1 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-title span {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      display: block;
+    }
+
+    .icon-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .icon-btn:hover, .icon-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-glow);
+    }
+
+    .view {
+      display: none;
+      animation: fadeIn 0.22s ease;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dashboard-intro {
+      margin-bottom: 18px;
+    }
+
+    .dashboard-intro h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .dashboard-intro p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .menu-card {
+      background: linear-gradient(145deg, var(--bg-card), var(--bg-secondary));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .menu-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 24px rgba(20, 184, 166, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .menu-card-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .menu-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 15px;
+      background: var(--accent-glow);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      font-family: 'JetBrains Mono', monospace;
+      border: 1px solid rgba(20, 184, 166, 0.3);
+    }
+
+    .menu-icon.moisture {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    .menu-info h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .menu-info p {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.35;
+    }
+
+    .calc-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 6px 0;
+    }
+
+    .back-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .formula-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: 99px;
+      color: var(--accent);
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .input-group {
+      margin-bottom: 14px;
+    }
+
+    .input-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .input-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .input-label-row label {
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .format-hint {
+      font-size: 0.7rem;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .calc-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 13px 46px 13px 14px;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.15rem;
+      font-weight: 700;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .calc-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .calc-input::placeholder {
+      color: #475569;
+      font-weight: 400;
+    }
+
+    .unit-tag {
+      position: absolute;
+      right: 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      pointer-events: none;
+    }
+
+    .result-box {
+      background: linear-gradient(145deg, #111d35, #0d1629);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      text-align: center;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .result-box.pass {
+      border-color: var(--success);
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.12);
+    }
+
+    .result-box.fail {
+      border-color: var(--danger);
+      box-shadow: 0 0 25px rgba(239, 68, 68, 0.12);
+    }
+
+    .result-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .result-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 99px;
+      font-size: 0.76rem;
+      font-weight: 600;
+    }
+
+    .status-pill.pass {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .status-pill.fail {
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .status-pill.neutral {
+      background: rgba(148, 163, 184, 0.14);
+      color: var(--text-secondary);
+    }
+
+    .auto-save-indicator {
+      font-size: 0.72rem;
+      color: var(--accent);
+      margin-top: 8px;
+      min-height: 16px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 20px 0 12px;
+    }
+
+    .section-header h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .clear-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--danger);
+      font-size: 0.74rem;
+      padding: 5px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .history-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .history-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .history-type {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .history-type.moisture {
+      color: #38bdf8;
+    }
+
+    .history-detail {
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .history-time {
+      font-size: 0.68rem;
+      color: #64748b;
+    }
+
+    .history-score {
+      text-align: right;
+    }
+
+    .history-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: block;
+    }
+
+    .history-badge {
+      font-size: 0.66rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+
+    .settings-group-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+
+    .setting-row:last-child {
+      border-bottom: none;
+    }
+
+    .setting-desc {
+      flex: 1;
+    }
+
+    .setting-desc strong {
+      display: block;
+      font-size: 0.86rem;
+      font-weight: 600;
+    }
+
+    .setting-desc span {
+      font-size: 0.74rem;
+      color: var(--text-secondary);
+    }
+
+    .setting-control {
+      width: 90px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      text-align: center;
+      outline: none;
+    }
+
+    .setting-control:focus {
+      border-color: var(--accent);
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: var(--accent);
+      color: #042f2e;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 13px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 8px;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      width: 100%;
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 11px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 8px;
+      z-index: 50;
+    }
+
+    .nav-item {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 12px;
+      border-radius: 10px;
+      transition: color 0.2s;
+    }
+
+    .nav-item.active {
+      color: var(--accent);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 28px 16px;
+      color: var(--text-secondary);
+      font-size: 0.84rem;
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      border: 1px dashed var(--border);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <div class="brand" onclick="switchView('dashboard')" style="cursor:pointer;">
+        <img src="assets/logo.png" alt="LabCalc Logo" />
+        <div class="brand-title">
+          <h1>LabCalc QC</h1>
+          <span>Auto Chemical Calculator</span>
+        </div>
+      </div>
+      <button class="icon-btn" id="headerSettingsBtn" onclick="switchView('settings')" title="Pengaturan">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
+    </header>
+
+    <!-- VIEW 1: DASHBOARD -->
+    <main id="view-dashboard" class="view active">
+      <div class="dashboard-intro">
+        <h2>Menu Analisis QC</h2>
+        <p>Pilih parameter pengujian untuk kalkulasi & penyimpanan otomatis</p>
+      </div>
+
+      <div class="menu-grid">
+        <div class="menu-card" onclick="switchView('ffa')">
+          <div class="menu-card-left">
+            <div class="menu-icon">%FFA</div>
+            <div class="menu-info">
+              <h3>Free Fatty Acid (FFA)</h3>
+              <p>Hitung kadar asam lemak bebas otomatis dengan standar batas QC</p>
+            </div>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+
+        <div class="menu-card" onclick="switchView('moisture')">
+          <div class="menu-card-left">
+            <div class="menu-icon moisture">%H₂O</div>
+            <div class="menu-info">
+              <h3>Kadar Air (Moisture)</h3>
+              <p>Hitung susut pengeringan botol timbang tanpa batas standar</p>
+            </div>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h3>Riwayat Pengujian Terakhir</h3>
+        <button class="clear-btn" onclick="clearHistory()">Hapus Semua</button>
+      </div>
+      <div id="dashboardHistoryList" class="history-list"></div>
+    </main>
+
+    <!-- VIEW 2: KALKULATOR FFA -->
+    <section id="view-ffa" class="view">
+      <div class="calc-header">
+        <button class="back-btn" onclick="switchView('dashboard')">← Dashboard</button>
+        <span class="formula-badge">%FFA = (V × N × 25,6) / W</span>
+      </div>
+
+      <div class="result-box" id="ffaResultBox">
+        <div class="result-title">Hasil %FFA</div>
+        <div class="result-value" id="ffaResultValue">0.000%</div>
+        <span class="status-pill neutral" id="ffaStatusPill">Menunggu input lengkap</span>
+        <div class="auto-save-indicator" id="ffaSaveNote"></div>
+      </div>
+
+      <div class="card">
+        <div class="input-group">
+          <div class="input-label-row">
+            <label for="ffaVolume">Volume Titrasi (V)</label>
+            <span class="format-hint" id="hintFfaVol">Auto: 1 angka sebelum koma</span>
+          </div>
+          <div class="input-wrapper">
+            <input type="text" inputmode="numeric" id="ffaVolume" class="calc-input" placeholder="Ketik angka tanpa koma..." autocomplete="off" />
+            <span class="unit-tag">mL</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <div class="input-label-row">
+            <label for="ffaNormality">Normalitas Larutan (N)</label>
+            <span class="format-hint">Bisa desimal (misal: 0.1)</span>
+          </div>
+          <div class="input-wrapper">
+            <input type="text" inputmode="decimal" id="ffaNormality" class="calc-input" placeholder="0.1" autocomplete="off" />
+            <span class="unit-tag">N</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <div class="input-label-row">
+            <label for="ffaWeight">Berat Sampel (W)</label>
+            <span class="format-hint" id="hintFfaWeight">Auto: 2 angka sebelum koma</span>
+          </div>
+          <div class="input-wrapper">
+            <input type="text" inputmode="numeric" id="ffaWeight" class="calc-input" placeholder="Ketik angka tanpa koma..." autocomplete="off" />
+            <span class="unit-tag">gram</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h3>Riwayat FFA</h3>
+      </div>
+      <div id="ffaHistoryList" class="history-list"></div>
+    </section>
+
+    <!-- VIEW 3: KALKULATOR KADAR AIR -->
+    <section id="view-moisture" class="view">
+      <div class="calc-header">
+        <button class="back-btn" onclick="switchView('dashboard')">← Dashboard</button>
+        <span class="formula-badge">%Air = ((A + B - C) / B) × 100</span>
+      </div>
+
+      <div class="result-box" id="moistureResultBox">
+        <div class="result-title">Hasil Kadar Air</div>
+        <div class="result-value" id="moistureResultValue">0.000%</div>
+        <span class="status-pill neutral" id="moistureStatusPill">Menunggu input lengkap</span>
+        <div class="auto-save-indicator" id="moistureSaveNote"></div>
+      </div>
+
+      <div class="card">
+        <div class="input-group">
+          <div class="input-label-row">
+            <label for="moistEmpty">Berat Botol Timbang Kosong (A)</label>
+            <span class="format-hint" id="hintMoistEmpty">Auto: 2 angka sebelum koma</span>
+          </div>
+          <div class="input-wrapper">
+            <input type="text" inputmode="numeric" id="moistEmpty" class="calc-input" placeholder="Ketik angka tanpa koma..." autocomplete="off" />
+            <span class="unit-tag">gram</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <div class="input-label-row">
+            <label for="moistSample">Berat Sampel Awal (B)</label>
+            <span class="format-hint" id="hintMoistSample">Auto: 1 angka setelah koma</span>
+          </div>
+          <div class="input-wrapper">
+            <input type="text" inputmode="numeric" id="moistSample" class="calc-input" placeholder="Ketik angka tanpa koma..." autocomplete="off" />
+            <span class="unit-tag">gram</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <div class="input-label-row">
+            <label for="moistFinal">Berat Akhir Setelah Oven (C)</label>
+            <span class="format-hint" id="hintMoistFinal">Auto: 2 angka sebelum koma</span>
+          </div>
+          <div class="input-wrapper">
+            <input type="text" inputmode="numeric" id="moistFinal" class="calc-input" placeholder="Ketik angka tanpa koma..." autocomplete="off" />
+            <span class="unit-tag">gram</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h3>Riwayat Kadar Air</h3>
+      </div>
+      <div id="moistureHistoryList" class="history-list"></div>
+    </section>
+
+    <!-- VIEW 4: PENGATURAN -->
+    <section id="view-settings" class="view">
+      <div class="calc-header">
+        <button class="back-btn" onclick="switchView('dashboard')">← Kembali</button>
+        <span class="formula-badge">Konfigurasi Sistem</span>
+      </div>
+
+      <div class="card">
+        <div class="settings-group-title">Standar & Format FFA</div>
+
+        <div class="setting-row">
+          <div class="setting-desc">
+            <strong>Standar Maksimal %FFA</strong>
+            <span>Batas lulus pengujian FFA (%)</span>
+          </div>
+          <input type="number" step="0.001" id="setFfaMax" class="setting-control" />
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-desc">
+            <strong>Digit Sebelum Koma (Berat Sampel)</strong>
+            <span>Contoh 2: 156574 → 15.6574</span>
+          </div>
+          <input type="number" min="1" max="5" id="setFfaWeightInt" class="setting-control" />
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-desc">
+            <strong>Digit Sebelum Koma (Volume Titrasi)</strong>
+            <span>Contoh 1: 125 → 1.25</span>
+          </div>
+          <input type="number" min="1" max="5" id="setFfaVolInt" class="setting-control" />
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-desc">
+            <strong>Angka Belakang Koma (Hasil)</strong>
+            <span>Presisi desimal hasil akhir</span>
+          </div>
+          <input type="number" min="1" max="6" id="setResultDecimals" class="setting-control" />
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="settings-group-title">Format Koma Kadar Air</div>
+
+        <div class="setting-row">
+          <div class="setting-desc">
+            <strong>Digit Sebelum Koma (Botol Kosong)</strong>
+            <span>Default: 2 angka sebelum koma</span>
+          </div>
+          <input type="number" min="1" max="5" id="setMoistEmptyInt" class="setting-control" />
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-desc">
+            <strong>Digit Setelah Koma (Berat Sampel)</strong>
+            <span>Default: 1 angka setelah koma</span>
+          </div>
+          <input type="number" min="1" max="5" id="setMoistSampleDec" class="setting-control" />
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-desc">
+            <strong>Digit Sebelum Koma (Berat Akhir)</strong>
+            <span>Default: 2 angka sebelum koma</span>
+          </div>
+          <input type="number" min="1" max="5" id="setMoistFinalInt" class="setting-control" />
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="saveSettings()">Simpan Pengaturan</button>
+      <button class="btn-secondary" onclick="resetDefaultSettings()">Reset ke Default Pabrik</button>
+    </section>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" id="nav-dashboard" onclick="switchView('dashboard')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+        <span>Dashboard</span>
+      </button>
+      <button class="nav-item" id="nav-ffa" onclick="switchView('ffa')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 3h6v7l4 9H5l4-9V3z"></path>
+        </svg>
+        <span>Hitung FFA</span>
+      </button>
+      <button class="nav-item" id="nav-moisture" onclick="switchView('moisture')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+        </svg>
+        <span>Kadar Air</span>
+      </button>
+      <button class="nav-item" id="nav-settings" onclick="switchView('settings')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        <span>Pengaturan</span>
+      </button>
+    </nav>
+  </div>
+
+  <script>
+    const DEFAULT_SETTINGS = {
+      ffaMax: 0.250,
+      ffaWeightIntDigits: 2,
+      ffaVolIntDigits: 1,
+      resultDecimals: 3,
+      moistEmptyIntDigits: 2,
+      moistSampleDecDigits: 1,
+      moistFinalIntDigits: 2,
+      lastNormality: '0.1'
+    };
+
+    let settings = JSON.parse(localStorage.getItem('labcalc_settings')) || { ...DEFAULT_SETTINGS };
+    let historyData = JSON.parse(localStorage.getItem('labcalc_history')) || [];
+
+    const overwriteReady = {
+      ffaVolume: false,
+      ffaWeight: false,
+      moistEmpty: false,
+      moistSample: false,
+      moistFinal: false
+    };
+
+    let ffaSaveTimer = null;
+    let moistSaveTimer = null;
+    let lastSavedFfaSignature = '';
+    let lastSavedMoistSignature = '';
+
+    function init() {
+      applySettingsToUI();
+      document.getElementById('ffaNormality').value = settings.lastNormality || '0.1';
+      bindAutoDecimalInput('ffaVolume', () => settings.ffaVolIntDigits, 'before', calculateFFA);
+      bindAutoDecimalInput('ffaWeight', () => settings.ffaWeightIntDigits, 'before', calculateFFA);
+      document.getElementById('ffaNormality').addEventListener('input', () => {
+        settings.lastNormality = document.getElementById('ffaNormality').value;
+        localStorage.setItem('labcalc_settings', JSON.stringify(settings));
+        calculateFFA();
+      });
+
+      bindAutoDecimalInput('moistEmpty', () => settings.moistEmptyIntDigits, 'before', calculateMoisture);
+      bindAutoDecimalInput('moistSample', () => settings.moistSampleDecDigits, 'after', calculateMoisture);
+      bindAutoDecimalInput('moistFinal', () => settings.moistFinalIntDigits, 'before', calculateMoisture);
+
+      renderAllHistory();
+    }
+
+    function formatDigits(rawDigits, count, mode) {
+      const digits = rawDigits.replace(/\D/g, '');
+      if (!digits) return '';
+      if (mode === 'before') {
+        if (digits.length <= count) return digits;
+        return digits.slice(0, count) + '.' + digits.slice(count);
+      } else {
+        if (digits.length <= count) {
+          return '0.' + digits.padStart(count, '0');
+        }
+        const intPart = digits.slice(0, digits.length - count);
+        const decPart = digits.slice(digits.length - count);
+        return intPart + '.' + decPart;
+      }
+    }
+
+    function bindAutoDecimalInput(elementId, getCountFn, mode, onCalcCallback) {
+      const el = document.getElementById(elementId);
+
+      el.addEventListener('focus', () => {
+        if (overwriteReady[elementId]) {
+          el.dataset.pendingClear = 'true';
+          el.select();
+        }
+      });
+
+      el.addEventListener('click', () => {
+        if (overwriteReady[elementId]) {
+          el.value = '';
+          overwriteReady[elementId] = false;
+          el.dataset.pendingClear = 'false';
+          onCalcCallback(true);
+        }
+      });
+
+      el.addEventListener('keydown', (e) => {
+        if (el.dataset.pendingClear === 'true' && /^[0-9]$/.test(e.key)) {
+          el.value = '';
+          el.dataset.pendingClear = 'false';
+          overwriteReady[elementId] = false;
+        }
+      });
+
+      el.addEventListener('input', () => {
+        const formatted = formatDigits(el.value, parseInt(getCountFn(), 10), mode);
+        el.value = formatted;
+        onCalcCallback(false);
+      });
+    }
+
+    function calculateFFA(isResetting = false) {
+      const vStr = document.getElementById('ffaVolume').value;
+      const nStr = document.getElementById('ffaNormality').value.replace(',', '.');
+      const wStr = document.getElementById('ffaWeight').value;
+
+      const v = parseFloat(vStr);
+      const n = parseFloat(nStr);
+      const w = parseFloat(wStr);
+
+      const resBox = document.getElementById('ffaResultBox');
+      const resVal = document.getElementById('ffaResultValue');
+      const pill = document.getElementById('ffaStatusPill');
+      const note = document.getElementById('ffaSaveNote');
+
+      const dec = parseInt(settings.resultDecimals, 10) || 3;
+
+      if (isResetting || isNaN(v) || isNaN(n) || isNaN(w) || w <= 0 || v <= 0 || n <= 0) {
+        resBox.className = 'result-box';
+        resVal.textContent = (0).toFixed(dec) + '%';
+        pill.className = 'status-pill neutral';
+        pill.textContent = 'Menunggu input lengkap';
+        note.textContent = '';
+        return;
+      }
+
+      const ffa = (v * n * 25.6) / w;
+      const ffaFormatted = ffa.toFixed(dec);
+      resVal.textContent = ffaFormatted + '%';
+
+      const isPass = ffa <= parseFloat(settings.ffaMax);
+      resBox.className = 'result-box ' + (isPass ? 'pass' : 'fail');
+      pill.className = 'status-pill ' + (isPass ? 'pass' : 'fail');
+      pill.textContent = isPass
+        ? `STANDAR OK (≤ ${parseFloat(settings.ffaMax).toFixed(dec)}%)`
+        : `MELEBIHI STANDAR (> ${parseFloat(settings.ffaMax).toFixed(dec)}%)`;
+
+      overwriteReady.ffaVolume = true;
+      overwriteReady.ffaWeight = true;
+
+      clearTimeout(ffaSaveTimer);
+      note.textContent = 'Menyimpan otomatis...';
+      ffaSaveTimer = setTimeout(() => {
+        const sig = `FFA|${vStr}|${nStr}|${wStr}|${ffaFormatted}`;
+        if (sig !== lastSavedFfaSignature) {
+          lastSavedFfaSignature = sig;
+          addHistory({
+            id: Date.now(),
+            type: 'FFA',
+            result: ffaFormatted + '%',
+            pass: isPass,
+            detail: `V:${vStr}mL | N:${nStr} | W:${wStr}g`,
+            time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+          });
+          note.textContent = '✓ Tersimpan ke riwayat (klik kolom untuk sampel baru)';
+        }
+      }, 900);
+    }
+
+    function calculateMoisture(isResetting = false) {
+      const aStr = document.getElementById('moistEmpty').value;
+      const bStr = document.getElementById('moistSample').value;
+      const cStr = document.getElementById('moistFinal').value;
+
+      const a = parseFloat(aStr);
+      const b = parseFloat(bStr);
+      const c = parseFloat(cStr);
+
+      const resBox = document.getElementById('moistureResultBox');
+      const resVal = document.getElementById('moistureResultValue');
+      const pill = document.getElementById('moistureStatusPill');
+      const note = document.getElementById('moistureSaveNote');
+
+      const dec = parseInt(settings.resultDecimals, 10) || 3;
+
+      if (isResetting || isNaN(a) || isNaN(b) || isNaN(c) || b <= 0 || a <= 0 || c <= 0) {
+        resBox.className = 'result-box';
+        resVal.textContent = (0).toFixed(dec) + '%';
+        pill.className = 'status-pill neutral';
+        pill.textContent = 'Menunggu input lengkap';
+        note.textContent = '';
+        return;
+      }
+
+      const moisture = ((a + b - c) / b) * 100;
+      const moistFormatted = moisture.toFixed(dec);
+      resVal.textContent = moistFormatted + '%';
+
+      resBox.className = 'result-box pass';
+      pill.className = 'status-pill pass';
+      pill.textContent = 'KALKULASI SELESAI';
+
+      overwriteReady.moistEmpty = true;
+      overwriteReady.moistSample = true;
+      overwriteReady.moistFinal = true;
+
+      clearTimeout(moistSaveTimer);
+      note.textContent = 'Menyimpan otomatis...';
+      moistSaveTimer = setTimeout(() => {
+        const sig = `MOIST|${aStr}|${bStr}|${cStr}|${moistFormatted}`;
+        if (sig !== lastSavedMoistSignature) {
+          lastSavedMoistSignature = sig;
+          addHistory({
+            id: Date.now(),
+            type: 'KADAR AIR',
+            result: moistFormatted + '%',
+            pass: null,
+            detail: `Ksg:${aStr}g | Spl:${bStr}g | Akh:${cStr}g`,
+            time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+          });
+          note.textContent = '✓ Tersimpan ke riwayat (klik kolom untuk sampel baru)';
+        }
+      }, 900);
+    }
+
+    function addHistory(entry) {
+      historyData.unshift(entry);
+      if (historyData.length > 50) historyData.pop();
+      localStorage.setItem('labcalc_history', JSON.stringify(historyData));
+      renderAllHistory();
+    }
+
+    function clearHistory() {
+      if (confirm('Hapus semua riwayat pengujian?')) {
+        historyData = [];
+        localStorage.removeItem('labcalc_history');
+        renderAllHistory();
+      }
+    }
+
+    function renderHistoryList(containerId, filterType = null) {
+      const container = document.getElementById(containerId);
+      const list = filterType ? historyData.filter(item => item.type === filterType) : historyData;
+
+      if (list.length === 0) {
+        container.innerHTML = `<div class="empty-state">Belum ada riwayat perhitungan tersimpan.</div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(item => {
+        const isMoist = item.type === 'KADAR AIR';
+        let badgeHtml = '';
+        if (item.pass === true) {
+          badgeHtml = `<span class="history-badge status-pill pass">OK</span>`;
+        } else if (item.pass === false) {
+          badgeHtml = `<span class="history-badge status-pill fail">TINGGI</span>`;
+        } else {
+          badgeHtml = `<span class="history-badge status-pill neutral">TERCATAT</span>`;
+        }
+
+        return `
+          <div class="history-item">
+            <div class="history-meta">
+              <div class="history-type ${isMoist ? 'moisture' : ''}">
+                <span>${item.type}</span>
+                <span class="history-time">• ${item.time}</span>
+              </div>
+              <div class="history-detail">${item.detail}</div>
+            </div>
+            <div class="history-score">
+              <span class="history-val">${item.result}</span>
+              ${badgeHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderAllHistory() {
+      renderHistoryList('dashboardHistoryList', null);
+      renderHistoryList('ffaHistoryList', 'FFA');
+      renderHistoryList('moistureHistoryList', 'KADAR AIR');
+    }
+
+    function switchView(viewName) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById(`view-${viewName}`).classList.add('active');
+
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      const activeNav = document.getElementById(`nav-${viewName}`);
+      if (activeNav) activeNav.classList.add('active');
+
+      const headerBtn = document.getElementById('headerSettingsBtn');
+      headerBtn.classList.toggle('active', viewName === 'settings');
+    }
+
+    function applySettingsToUI() {
+      document.getElementById('setFfaMax').value = settings.ffaMax;
+      document.getElementById('setFfaWeightInt').value = settings.ffaWeightIntDigits;
+      document.getElementById('setFfaVolInt').value = settings.ffaVolIntDigits;
+      document.getElementById('setResultDecimals').value = settings.resultDecimals;
+
+      document.getElementById('setMoistEmptyInt').value = settings.moistEmptyIntDigits;
+      document.getElementById('setMoistSampleDec').value = settings.moistSampleDecDigits;
+      document.getElementById('setMoistFinalInt').value = settings.moistFinalIntDigits;
+
+      document.getElementById('hintFfaVol').textContent = `Auto: ${settings.ffaVolIntDigits} angka sebelum koma`;
+      document.getElementById('hintFfaWeight').textContent = `Auto: ${settings.ffaWeightIntDigits} angka sebelum koma`;
+      document.getElementById('hintMoistEmpty').textContent = `Auto: ${settings.moistEmptyIntDigits} angka sebelum koma`;
+      document.getElementById('hintMoistSample').textContent = `Auto: ${settings.moistSampleDecDigits} angka setelah koma`;
+      document.getElementById('hintMoistFinal').textContent = `Auto: ${settings.moistFinalIntDigits} angka sebelum koma`;
+    }
+
+    function saveSettings() {
+      settings.ffaMax = parseFloat(document.getElementById('setFfaMax').value) || 0.250;
+      settings.ffaWeightIntDigits = parseInt(document.getElementById('setFfaWeightInt').value, 10) || 2;
+      settings.ffaVolIntDigits = parseInt(document.getElementById('setFfaVolInt').value, 10) || 1;
+      settings.resultDecimals = parseInt(document.getElementById('setResultDecimals').value, 10) || 3;
+
+      settings.moistEmptyIntDigits = parseInt(document.getElementById('setMoistEmptyInt').value, 10) || 2;
+      settings.moistSampleDecDigits = parseInt(document.getElementById('setMoistSampleDec').value, 10) || 1;
+      settings.moistFinalIntDigits = parseInt(document.getElementById('setMoistFinalInt').value, 10) || 2;
+
+      localStorage.setItem('labcalc_settings', JSON.stringify(settings));
+      applySettingsToUI();
+      calculateFFA();
+      calculateMoisture();
+      alert('Pengaturan berhasil disimpan!');
+      switchView('dashboard');
+    }
+
+    function resetDefaultSettings() {
+      settings = { ...DEFAULT_SETTINGS };
+      localStorage.setItem('labcalc_settings', JSON.stringify(settings));
+      applySettingsToUI();
+      calculateFFA();
+      calculateMoisture();
+      alert('Pengaturan dikembalikan ke standar awal.');
+    }
+
+    init();
+  </script>
+</body>
+</html>
